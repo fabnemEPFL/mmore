@@ -3,6 +3,7 @@ from .type import MultimodalSample
 from .index.indexer import IndexerConfig, Indexer
 
 from dataclasses import dataclass, field
+import argparse
 import json
 
 import logging
@@ -12,6 +13,12 @@ logging.basicConfig(format=f'[INDEX {INDEX_EMOJI}  -- %(asctime)s] %(message)s',
 
 from dotenv import load_dotenv
 load_dotenv() 
+
+@dataclass
+class IndexConfig:
+    indexer: IndexerConfig
+    collection_name: str
+    documents_path: str
 
 def load_results(path: str, file_type: str = None):
     # Load the results computed and saved by 'run_process.py'
@@ -23,12 +30,12 @@ def load_results(path: str, file_type: str = None):
     logger.info(f"Loaded {len(results)} results")
     return results
 
-def index(config_file, input_data, collection_name):
+def index(config_file, collection_name, documents_path):
     """Index files for specified documents."""
     # Load the config file
     config = load_config(config_file, IndexerConfig) 
 
-    documents = MultimodalSample.from_jsonl(input_data)
+    documents = MultimodalSample.from_jsonl(documents_path)
     
     logger.info("Creating the indexer...")
     indexer = Indexer.from_documents(
@@ -40,9 +47,8 @@ def index(config_file, input_data, collection_name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config_file", required=True, help="Path to the index configuration file.")
-    parser.add_argument("--input_data", required=True, help="Path to the jsonl of the documents.")
-    parser.add_argument("--collection_name", required=True)
-
+    parser.add_argument("--config-file", required=True, help="Path to the index configuration file.")
     args = parser.parse_args()
-    index(args.config_file, args.input_data, args.collection_name)
+
+    index_config = load_config(args.config_file, IndexConfig)
+    index(index_config.indexer, index_config.collection_name, index_config.documents_path)

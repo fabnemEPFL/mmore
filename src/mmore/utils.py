@@ -9,4 +9,8 @@ def load_config(yaml_dict_or_path: str | Dict, config_class: Config) -> Config:
             data = yaml.safe_load(file)
     else:
         data = yaml_dict_or_path
-    return from_dict(config_class, data)
+    
+    if isinstance(data, dict):
+        return from_dict(config_class, data)
+    else:
+        return data
