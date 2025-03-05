@@ -1,21 +1,19 @@
-dispatcher_config:
-  output_path: examples/process/outputs/ #put absolute path!
-  use_fast_processors: false
-  distributed: false
-  dashboard_backend_url: http://0.0.0.0:8000
-  extract_images: true
-  #scheduler_file: scheduler-file.json #put absolute path!
-  process_batch_sizes:
+process_batch_sizes:
+  node_batch_sizes:
     - URLProcessor: 40
     - DOCXProcessor: 100
-    - PDFProcessor: 4000
+    - PDFProcessor: 1000
     - MediaProcessor: 40
     - SpreadsheetProcessor: 100
     - TXTProcessor: 100
     - PPTXProcessor: 100
     - MarkdownProcessor: 100
-    - EMLProcessor: 100
 
+dispatcher_config:
+  output_path: examples/outputs/
+  use_fast_processors: false
+  distributed: false
+  dashboard_backend_url: http://127.0.0.1:8888
   processor_config:
     MediaProcessor:
       - normal_model: "openai/whisper-large-v3-turbo"
@@ -34,4 +32,6 @@ dispatcher_config:
       - LAYOUT_BATCH_SIZE: 1
       - ORDER_BATCH_SIZE: 1
       - TABLE_REC_BATCH_SIZE: 1
-data_path: examples/sample_data/ #put absolute path!
+
+data_path: /mloscratch/datasets/ADS_Scraping_Results
+
