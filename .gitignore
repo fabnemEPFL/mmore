@@ -108,6 +108,7 @@ __pypackages__/
 .venv
 .mmore_venv
 .test_venv
+.new_venv
 env/
 venv/
 ENV/

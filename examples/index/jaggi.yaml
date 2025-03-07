@@ -7,6 +7,6 @@ indexer:
         is_multimodal: false
     db:
         uri: ./proc_demo.db
-        name: my_db
-collection_name: my_docs
-documents_path: 'examples/process/outputs/merged/merged_results.jsonl'
+        name: swiss_llm
+collection_name: swiss_llm
+documents_path: 'examples/outputs/merged/merged_results.jsonl'
