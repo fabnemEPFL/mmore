@@ -30,16 +30,20 @@ def load_results(path: str, file_type: str = None):
     logger.info(f"Loaded {len(results)} results")
     return results
 
-def index(config_file, collection_name, documents_path):
+def index(config_file, collection_name: str = None, documents_path: str = None):
     """Index files for specified documents."""
     # Load the config file
-    config = load_config(config_file, IndexerConfig) 
+    config = load_config(config_file, IndexConfig)
+    if collection_name is None:
+        collection_name = config.collection_name
+    if documents_path is None:
+        documents_path = config.documents_path
 
     documents = MultimodalSample.from_jsonl(documents_path)
     
     logger.info("Creating the indexer...")
     indexer = Indexer.from_documents(
-        config=config, 
+        config=config.indexer, 
         documents=documents,
         collection_name=collection_name
     )
@@ -48,6 +52,8 @@ def index(config_file, collection_name, documents_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--config-file", required=True, help="Path to the index configuration file.")
+    parser.add_argument('--documents-path', '-f', required=False, help='Path to the JSONL data.')
+    parser.add_argument('--collection-name', '-n', required=False, help='Name of the collection to index.')
     args = parser.parse_args()
 
     index_config = load_config(args.config_file, IndexConfig)
