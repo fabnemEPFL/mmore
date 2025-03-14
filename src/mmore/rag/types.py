@@ -7,10 +7,14 @@ from langchain_core.documents import Document
 
 # ------------------------------- Simple Input ------------------------------- #
 
+class Msg(BaseModel):
+    role: str
+    content: str
+
 class MMOREInput(BaseModel):
     """Input for the chat endpoint."""
 
-    input: str = Field(
+    input: str | list[Msg] = Field(
         ...,
         description="The user input.",
     )
