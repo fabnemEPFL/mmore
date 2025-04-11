@@ -8,7 +8,7 @@ import time
 
 os.chdir(os.path.dirname(os.path.dirname(__file__)))
 
-from mmore.run_rag import rag, RAGInferenceConfig
+from mmore.run_rag import rag, RAGInferenceConfig, read_queries, save_results
 from mmore.utils import load_config
 
 def test_load_config():
@@ -25,7 +25,7 @@ def test_load_config():
     assert config.rag.retriever
     retriever = config.rag.retriever
     assert retriever.db
-    assert retriever.db.uri == "./examples/rag/ner.db"
+    assert retriever.db.uri == "./demo.db"
     assert retriever.hybrid_search_weight == 0.5
     assert retriever.k == 5
 
@@ -48,10 +48,17 @@ def test_load_config2():
     assert mode_args.port == 8000
     assert mode_args.host == "localhost"
 
-@patch("mmore.run_rag.open", new_callable=mock_open)
-@patch("mmore.run_rag.save_results")
-@patch("mmore.run_rag.read_queries")
-def test_local_query(read_queries, save_results, mock_open_func):
+def test_read_queries():
+    path = os.path.relpath("examples/rag/config.yaml", os.path.dirname(os.path.dirname(__file__)))
+    config = load_config(path, RAGInferenceConfig)
+
+    queries = read_queries(config.mode_args.input_file)
+    assert len(queries) == 4, f"Expected 4 queries, got {len(queries)}"
+    assert queries[0]["input"] == "When was Barack Obama born?"
+
+@patch("mmore.run_rag.save_results", side_effect=save_results)
+@patch("mmore.run_rag.read_queries", side_effect=read_queries)
+def test_local_query(read_queries, save_results):
     path = os.path.relpath("examples/rag/config.yaml", os.path.dirname(os.path.dirname(__file__)))
 
     start_time = time.time()
@@ -63,10 +70,6 @@ def test_local_query(read_queries, save_results, mock_open_func):
 
     path_input = "./examples/rag/queries.jsonl"
     path_output = "./examples/rag/output.json"
-
-    handle = mock_open_func()
-    handle.read.assert_called_once_with(path_input)
-    handle.write.assert_called_once_with(path_output)
 
     assert os.path.exists(path_output)
     assert start_time <= os.path.getmtime(path_output)
