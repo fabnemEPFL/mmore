@@ -431,9 +431,15 @@ def run_evaluation(
         else:
             raise
 
-def evaluation(config_file: str, output_path: str = None, max_retries: int = 3, retry_delay: int = 5, use_fallback_model: bool = False):
+
+def evaluation(config_file: str, max_retries: int = 3, retry_delay: int = 5):
     """Main entry point for the evaluation process."""
-    return run_evaluation(config_file, output_path, max_retries, retry_delay, use_fallback_model)
+    output_path = None
+    use_fallback_model = False
+    return run_evaluation(
+        config_file, output_path, max_retries, retry_delay, use_fallback_model
+    )
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -444,12 +450,6 @@ def main():
         type=str,
         required=True,
         help="Path to the unified evaluation configuration file",
-    )
-    parser.add_argument(
-        "--output", 
-        type=str, 
-        help="Path to save evaluation results (optional)"
-        "--output", type=str, help="Path to save evaluation results (optional)"
     )
     parser.add_argument(
         "--max-retries",
@@ -463,19 +463,12 @@ def main():
         default=5,
         help="Delay between retries in seconds (default: 5)",
     )
-    parser.add_argument(
-        "--use-fallback-model",
-        action="store_true",
-        help="Use a local fallback model if OpenAI API fails",
-    )
 
     args = parser.parse_args()
     evaluation(
         args.config_file,
-        args.output,
         args.max_retries,
         args.retry_delay,
-        args.use_fallback_model,
     )
 
 

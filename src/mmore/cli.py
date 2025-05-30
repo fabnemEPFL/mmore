@@ -197,5 +197,30 @@ def dashboard_backend(host, port):
     run_api(host, port)
 
 
+@main.command()
+@click.option(
+    "--config-file",
+    type=str,
+    required=True,
+    help="Path to the config file for evaluation.",
+)
+@click.option(
+    "--max-retries",
+    type=int,
+    default=3,
+    help="Maximum number of retries for API calls (default: 3)",
+)
+@click.option(
+    "--retry-delay",
+    type=int,
+    default=5,
+    help="Delay between retries in seconds (default: 5)",
+)
+def evaluation(config_file, max_retries, retry_delay):
+    from .run_evaluation import evaluation as run_evaluation
+
+    run_evaluation(config_file, max_retries, retry_delay)
+
+
 if __name__ == "__main__":
     main()
