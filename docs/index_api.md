@@ -63,8 +63,8 @@ This command:
   "status": "success",
   "message": "File successfully indexed in my_documents collection",
   "fileId": "example123",
-  "filename": "doc.pdf" }
-
+  "filename": "doc.pdf"
+}
 ```
 
 ---
